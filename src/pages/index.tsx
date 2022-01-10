@@ -302,18 +302,21 @@ function Player(props) {
   )
 }
 
-const IndexPageContainer = () => (
-  <Suspense fallback={null}>
-    <Canvas
-      colorManagement
-      shadows
-      style={{
-        height: "100vh",
-      }}
-    >
-      <IndexPage />
-    </Canvas>
-  </Suspense>
-)
+const IndexPageContainer = () =>
+  isBrowser() ? (
+    <Suspense fallback={null}>
+      <Canvas
+        colorManagement
+        shadows
+        style={{
+          height: "100vh",
+        }}
+      >
+        <IndexPage />
+      </Canvas>
+    </Suspense>
+  ) : null
 
 export default IndexPageContainer
+
+const isBrowser = () => ![typeof window, typeof document].includes("undefined")
