@@ -12,6 +12,7 @@ import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader"
 import { TextureLoader } from "three/src/loaders/TextureLoader"
 
 import { useLoader } from "@react-three/fiber"
+import Scene from "../components/Scene/Scene"
 
 const keyMap = {
   UP: false,
@@ -306,13 +307,14 @@ const IndexPageContainer = () =>
   isBrowser() ? (
     <Suspense fallback={null}>
       <Canvas
+        concurrent
         colorManagement
         shadows
         style={{
           height: "100vh",
         }}
       >
-        <IndexPage />
+        <Scene />
       </Canvas>
     </Suspense>
   ) : null
