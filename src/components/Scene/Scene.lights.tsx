@@ -4,11 +4,11 @@ export const Lights = () => (
   <>
     <ambientLight intensity={0.3} />
 
-    <directionalLight position={[10, 10, 5]} intensity={0.6} />
+    <directionalLight position={[10, 10, 5]} intensity={0.2} />
     <directionalLight
       castShadow
       position={[0, 10, 0]}
-      intensity={0.1}
+      intensity={0.6}
       shadow-mapSize-width={1024}
       shadow-mapSize-height={1024}
       shadow-camera-far={50}
