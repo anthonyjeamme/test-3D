@@ -32,6 +32,8 @@ export const AnimatedModel = ({
 
   const { actions } = useAnimations(gltf.animations, group)
 
+  console.log(Object.keys(actions))
+
   useEffect(() => {
     gltf.scene.traverse(function (child) {
       if (child instanceof THREE.Mesh) {
@@ -40,7 +42,36 @@ export const AnimatedModel = ({
       }
     })
 
-    actions["Armature.001|mixamo.com|Layer0"].play()
+    const handleKeyUp = e => {
+      const walkAnimation = actions["Armature|mixamo.com|Layer0.002"]
+      if (e.key === "ArrowUp") {
+        walkAnimation.paused = true
+      } else if (e.key === "ArrowDown") {
+        walkAnimation.paused = true
+      }
+    }
+
+    const handleKeyDown = e => {
+      const walkAnimation = actions["Armature|mixamo.com|Layer0.002"]
+
+      if (e.key === "ArrowUp") {
+        walkAnimation.timeScale = 1
+        walkAnimation.play()
+        walkAnimation.paused = false
+      } else if (e.key === "ArrowDown") {
+        walkAnimation.timeScale = -1
+        walkAnimation.play()
+        walkAnimation.paused = false
+      }
+    }
+
+    window.addEventListener("keyup", handleKeyUp)
+    window.addEventListener("keydown", handleKeyDown)
+
+    return () => {
+      window.removeEventListener("keyup", handleKeyUp)
+      window.removeEventListener("keydown", handleKeyDown)
+    }
   }, [gltf])
 
   return (

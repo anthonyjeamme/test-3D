@@ -14,6 +14,8 @@ import { TextureLoader } from "three/src/loaders/TextureLoader"
 import { useLoader } from "@react-three/fiber"
 import Scene from "../components/Scene/Scene"
 
+import "./style.css"
+
 const keyMap = {
   UP: false,
   DOWN: false,

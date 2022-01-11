@@ -1362,12 +1362,12 @@
         },
         {
             "mesh" : 0,
-            "name" : "Alpha_Joints.001",
+            "name" : "Alpha_Joints",
             "skin" : 0
         },
         {
             "mesh" : 1,
-            "name" : "Alpha_Surface.001",
+            "name" : "Alpha_Surface",
             "skin" : 0
         },
         {
@@ -1376,7 +1376,7 @@
                 68,
                 66
             ],
-            "name" : "Armature.001",
+            "name" : "Armature",
             "rotation" : [
                 0.7071068286895752,
                 0,
@@ -2801,7 +2801,7 @@
                     }
                 }
             ],
-            "name" : "Armature.001|mixamo.com|Layer0",
+            "name" : "Armature|mixamo.com|Layer0.002",
             "samplers" : [
                 {
                     "input" : 13,
@@ -3814,7 +3814,7 @@
     "materials" : [
         {
             "doubleSided" : true,
-            "name" : "Alpha_Joints_MAT.001",
+            "name" : "Alpha_Joints_MAT.002",
             "pbrMetallicRoughness" : {
                 "baseColorFactor" : [
                     0.15355153381824493,
@@ -3828,7 +3828,7 @@
         },
         {
             "doubleSided" : true,
-            "name" : "Alpha_Body_MAT.001",
+            "name" : "Alpha_Body_MAT.002",
             "pbrMetallicRoughness" : {
                 "baseColorFactor" : [
                     0.09657000750303268,
@@ -3843,7 +3843,7 @@
     ],
     "meshes" : [
         {
-            "name" : "Alpha_Joints.001",
+            "name" : "Alpha_Joints.002",
             "primitives" : [
                 {
                     "attributes" : {
@@ -3859,7 +3859,7 @@
             ]
         },
         {
-            "name" : "Alpha_Surface.001",
+            "name" : "Alpha_Surface.002",
             "primitives" : [
                 {
                     "attributes" : {
@@ -3947,7 +3947,7 @@
                 62,
                 61
             ],
-            "name" : "Armature.001"
+            "name" : "Armature"
         }
     ],
     "accessors" : [
