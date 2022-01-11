@@ -29,10 +29,9 @@ export const AnimatedModel = ({
 }) => {
   const group = useRef()
   const gltf = useLoader(GLTFLoader, url)
+  const currentAnimationRef = useRef(null)
 
   const { actions } = useAnimations(gltf.animations, group)
-
-  console.log(Object.keys(actions))
 
   useEffect(() => {
     gltf.scene.traverse(function (child) {
@@ -43,22 +42,29 @@ export const AnimatedModel = ({
     })
 
     const handleKeyUp = e => {
-      const walkAnimation = actions["Armature|mixamo.com|Layer0.002"]
-      if (e.key === "ArrowUp") {
-        walkAnimation.paused = true
-      } else if (e.key === "ArrowDown") {
-        walkAnimation.paused = true
+      const walkAnimation = actions["run"]
+      const idleAnimation = actions["idle"]
+
+      if (e.key === "z") {
+        walkAnimation.stop()
+        idleAnimation.play()
+      } else if (e.key === "s") {
+        walkAnimation.stop()
+        idleAnimation.play()
       }
     }
 
     const handleKeyDown = e => {
-      const walkAnimation = actions["Armature|mixamo.com|Layer0.002"]
+      const idleAnimation = actions["idle"]
+      const walkAnimation = actions["run"]
 
-      if (e.key === "ArrowUp") {
+      if (e.key === "z") {
+        idleAnimation.stop()
         walkAnimation.timeScale = 1
         walkAnimation.play()
         walkAnimation.paused = false
-      } else if (e.key === "ArrowDown") {
+      } else if (e.key === "s") {
+        idleAnimation.stop()
         walkAnimation.timeScale = -1
         walkAnimation.play()
         walkAnimation.paused = false
@@ -73,6 +79,12 @@ export const AnimatedModel = ({
       window.removeEventListener("keydown", handleKeyDown)
     }
   }, [gltf])
+
+  useEffect(() => {
+    const idleAnimation = actions["idle"]
+
+    idleAnimation.play()
+  }, [])
 
   return (
     <group ref={group}>

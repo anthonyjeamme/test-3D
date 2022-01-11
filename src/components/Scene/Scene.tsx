@@ -12,8 +12,10 @@ const Scene = () => {
 
       {/* <Model url="/models/armchairYellow.gltf" /> */}
 
-      <group scale={0.5}>
-        <Model url="/models/ground.gltf" receiveShadow />
+      <group position={[0, 0, 0]}>
+        <group scale={0.25}>
+          <Model url="/models/ground.gltf" receiveShadow />
+        </group>
       </group>
 
       <Player />
@@ -58,18 +60,20 @@ const Player = () => {
 
   const groupRef = useRef()
 
+  const speed = 4
+
   useFrame((_, delta) => {
     if (keyMap.LEFT) position.rotation += delta * 3
     if (keyMap.RIGHT) position.rotation -= delta * 3
 
     if (keyMap.UP) {
-      position.z += Math.cos(position.rotation) * delta * 2
-      position.x += Math.sin(position.rotation) * delta * 2
+      position.z += Math.cos(position.rotation) * delta * speed
+      position.x += Math.sin(position.rotation) * delta * speed
     }
 
     if (keyMap.DOWN) {
-      position.z -= Math.cos(position.rotation) * delta * 2
-      position.x -= Math.sin(position.rotation) * delta * 2
+      position.z -= Math.cos(position.rotation) * delta * speed
+      position.x -= Math.sin(position.rotation) * delta * speed
     }
   })
 
@@ -94,7 +98,7 @@ const Player = () => {
 
   return (
     <group ref={groupRef}>
-      <AnimatedModel url="/models/bot.gltf" castShadow />
+      <AnimatedModel url="/models/cool.gltf" castShadow />
     </group>
   )
 }
@@ -102,30 +106,30 @@ const Player = () => {
 const useKeyHandling = () => {
   useEffect(() => {
     const handleKeyDown = e => {
-      if (e.key === "ArrowUp") {
+      if (e.key === "z") {
         keyMap.UP = true
       }
-      if (e.key === "ArrowDown") {
+      if (e.key === "s") {
         keyMap.DOWN = true
       }
-      if (e.key === "ArrowLeft") {
+      if (e.key === "q") {
         keyMap.LEFT = true
       }
-      if (e.key === "ArrowRight") {
+      if (e.key === "d") {
         keyMap.RIGHT = true
       }
     }
     const handleKeyUp = e => {
-      if (e.key === "ArrowUp") {
+      if (e.key === "z") {
         keyMap.UP = false
       }
-      if (e.key === "ArrowDown") {
+      if (e.key === "s") {
         keyMap.DOWN = false
       }
-      if (e.key === "ArrowLeft") {
+      if (e.key === "q") {
         keyMap.LEFT = false
       }
-      if (e.key === "ArrowRight") {
+      if (e.key === "d") {
         keyMap.RIGHT = false
       }
     }
