@@ -6,6 +6,7 @@ import { useLoader } from "@react-three/fiber"
 
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
 import { useAnimations } from "@react-three/drei"
+import { TextureLoader } from "three"
 
 export const Model = ({ url, castShadow = false, receiveShadow = false }) => {
   const gltf = useLoader(GLTFLoader, url)
@@ -89,6 +90,37 @@ export const AnimatedModel = ({
   return (
     <group ref={group}>
       <primitive object={gltf.scene} dispose={null} />
+    </group>
+  )
+}
+
+export const TranspText = () => {
+  const colorMap = useLoader(TextureLoader, "/grass.png")
+
+  console.log(colorMap)
+
+  const factor = 50
+
+  return (
+    <group>
+      {Array.from(new Array(200)).map((_, i) => (
+        <mesh
+          scale={0.2}
+          position={[Math.random() - 5, 0.75, 0.1 * i - 4]}
+          rotation={[-0.2, 0, 0]}
+        >
+          {/* Width and height segments for displacementMap */}
+          <planeBufferGeometry
+            attach="geometry"
+            args={[1601 / factor, 378 / factor]}
+          />
+          <meshStandardMaterial
+            scale={[0.2, 0.2 * (i % 2 === 0 ? -1 : 1), 0.2]}
+            map={colorMap}
+            transparent={true}
+          />
+        </mesh>
+      ))}
     </group>
   )
 }

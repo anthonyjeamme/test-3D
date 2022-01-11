@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react"
 
 import { OrbitControls, useGLTF } from "@react-three/drei"
 import { Lights } from "./Scene.lights"
-import { Model, AnimatedModel } from "./Scene.model"
+import { Model, AnimatedModel, TranspText } from "./Scene.model"
 import { useFrame, useThree } from "@react-three/fiber"
 
 const Scene = () => {
@@ -17,6 +17,8 @@ const Scene = () => {
           <Model url="/models/ground.gltf" receiveShadow />
         </group>
       </group>
+
+      <TranspText />
 
       <Player />
 
