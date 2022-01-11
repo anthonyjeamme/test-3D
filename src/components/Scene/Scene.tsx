@@ -3,12 +3,11 @@ import React, { useEffect, useRef } from "react"
 import { OrbitControls, useGLTF } from "@react-three/drei"
 import { Lights } from "./Scene.lights"
 import { Model, AnimatedModel } from "./Scene.model"
-import { useFrame } from "@react-three/fiber"
+import { useFrame, useThree } from "@react-three/fiber"
 
 const Scene = () => {
   return (
     <>
-      <OrbitControls makeDefault />
       <Lights />
 
       {/* <Model url="/models/armchairYellow.gltf" /> */}
@@ -78,6 +77,19 @@ const Player = () => {
     groupRef.current.rotation.y = position.rotation
     groupRef.current.position.x = position.x
     groupRef.current.position.z = position.z
+  })
+
+  const { camera } = useThree()
+
+  useEffect(() => {
+    camera.position.y = 2
+    camera.rotation.x = -Math.PI / 3.5
+  }, [])
+
+  useFrame(() => {
+    camera.position.x = position.x
+    camera.position.z = position.z + 4
+    camera.position.y = position.y + 6
   })
 
   return (
