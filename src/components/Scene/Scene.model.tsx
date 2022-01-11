@@ -88,7 +88,7 @@ export const AnimatedModel = ({
   }, [])
 
   return (
-    <group ref={group}>
+    <group ref={group} scale={(1.115 * 1.75) / 2}>
       <primitive object={gltf.scene} dispose={null} />
     </group>
   )
@@ -96,8 +96,6 @@ export const AnimatedModel = ({
 
 export const TranspText = () => {
   const colorMap = useLoader(TextureLoader, "/grass.png")
-
-  console.log(colorMap)
 
   const factor = 50
 
