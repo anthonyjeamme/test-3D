@@ -188,14 +188,14 @@ const Player = () => {
 
   useEffect(() => {
     camera.position.y = 2
-    camera.rotation.x = -Math.PI / 3
+    camera.rotation.x = -Math.PI / 5
   }, [])
 
   useFrame(() => {
     const { position } = scene.getPlayer()
     camera.position.x = position.x
-    camera.position.z = position.z + 2.5
-    camera.position.y = position.y + 4.5
+    camera.position.z = position.z + 1.5
+    camera.position.y = position.y + 1.5
   })
 
   return (

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import * as THREE from "three"
 
 import { useAnimations } from "@react-three/drei"
@@ -15,7 +15,7 @@ export const HumanoidModel = ({
   const group = useRef()
   const gltf = useLoader(GLTFLoader, url)
   const currentAnimationRef = useRef("idle")
-  const { actions } = useAnimations(gltf.animations, group)
+  const { actions, mixer } = useAnimations(gltf.animations, group)
   const currentActionRef = useRef(actions["idle"])
 
   const scene = useScene()
@@ -27,27 +27,34 @@ export const HumanoidModel = ({
       if (scene.getPlayer().jumping) return
 
       if (scene.getPlayer().sitting) {
+        changeToAction("idle")
         fadeToActionOnce("sit-to-stand", 0.2)
-          .getMixer()
-          .addEventListener("finished", () => {
-            scene.getPlayer().sitting = false
-
-            fadeToAction("idle", 0.1)
-          })
       } else {
         scene.getPlayer().sitting = true
 
+        changeToAction("sit-idle")
         fadeToActionOnce("stand-to-sit", 0.2)
-          .getMixer()
-          .addEventListener("finished", () => {
-            fadeToAction("sit-idle", 0.1)
-          })
       }
     }
+
     const handleJump = () => {}
 
     input.addActionListener("SIT", handleSit)
     input.addActionListener("JUMP", handleJump)
+    mixer.addEventListener("finished", event => {
+      console.log(event.action._clip.name)
+
+      const action = event.action._clip.name
+
+      if (action === "stand-to-sit") {
+        group.current.position.z = -0.5
+        changeToAction("sit-idle")
+      } else if (action === "sit-to-stand") {
+        scene.getPlayer().sitting = false
+        group.current.position.z = 0
+        changeToAction("idle")
+      }
+    })
 
     return () => {
       input.removeActionListener("SIT", handleSit)
@@ -68,6 +75,19 @@ export const HumanoidModel = ({
       window.removeEventListener("keydown", handleKeyDown)
     }
   }, [])
+
+  function changeToAction(name) {
+    const previousAction = currentActionRef.current
+    currentActionRef.current = actions[name]
+
+    previousAction?.stop()
+
+    currentActionRef.current
+      .reset()
+      .setEffectiveTimeScale(1)
+      .setEffectiveWeight(1)
+      .play()
+  }
 
   function fadeToAction(name, duration) {
     const previousAction = currentActionRef.current
@@ -140,7 +160,7 @@ export const HumanoidModel = ({
   }, [])
 
   return (
-    <group ref={group} scale={(1.115 * 1.75) / 2}>
+    <group ref={group} scale={(1.115 * 1.75) / 2} position={[0, 0, 0]}>
       <primitive object={gltf.scene} dispose={null} />
     </group>
   )
