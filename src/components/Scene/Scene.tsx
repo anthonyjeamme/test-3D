@@ -33,14 +33,14 @@ const Scene = () => {
       >
         <Model url="/models/sofa.gltf" receiveShadow />
       </group> */}
-
+      {/* 
       <group scale={0.2} position={[0, 0, 0]}>
         <Model url="/models/table.gltf" castShadow />
       </group>
 
       <group scale={0.2} position={[0, 0.8, 1.5]}>
         <Model url="/models/pot-fleurs.gltf" castShadow />
-      </group>
+      </group> */}
 
       {/* 
       <group scale={0.2} position={[0, 0, 1.4]}>
@@ -152,12 +152,34 @@ const Player = () => {
     }
 
     if (player.speed) {
-      position.rotation = Math.atan2(dx, dz)
-      position.x += Math.sin(position.rotation) * delta * speed * player.speed
-      position.z += Math.cos(position.rotation) * delta * speed * player.speed
+      const ang = Math.atan2(dx, dz)
+      if (player.rotation !== Math.atan2(dx, dz)) {
+        let delta_rad = Math.atan2(dx, dz) - player.rotation
+
+        if (delta_rad > Math.PI) {
+          delta_rad -= Math.PI * 2
+        }
+
+        if (delta_rad < -Math.PI) {
+          delta_rad += Math.PI * 2
+        }
+
+        const sign = Math.sign(delta_rad)
+
+        const abs = Math.abs(delta_rad)
+
+        console.log({ sign, abs })
+
+        const add = Math.min(delta * 10 * (abs > Math.PI / 2 ? 2 : 1), abs)
+
+        player.rotation += add * sign
+      }
+
+      position.x += Math.sin(ang) * delta * speed * player.speed
+      position.z += Math.cos(ang) * delta * speed * player.speed
     }
 
-    groupRef.current.rotation.y = position.rotation
+    groupRef.current.rotation.y = player.rotation
     groupRef.current.position.x = position.x
     groupRef.current.position.z = position.z
   })

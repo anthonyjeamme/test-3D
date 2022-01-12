@@ -14,8 +14,40 @@ export const HumanoidModel = ({
   const group = useRef()
   const gltf = useLoader(GLTFLoader, url)
   const currentAnimationRef = useRef("idle")
+  const { actions } = useAnimations(gltf.animations, group)
+  const currentActionRef = useRef(actions["idle"])
+
+  useEffect(() => {
+    const handleKeyDown = e => {
+      if (e.key === "p") {
+        fadeToAction("run", 1000)
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [])
 
   const scene = useScene()
+
+  function fadeToAction(name, duration) {
+    const previousAction = currentActionRef.current
+    currentActionRef.current = actions[name]
+
+    if (previousAction !== currentActionRef.current) {
+      previousAction?.fadeOut(duration)
+    }
+
+    currentActionRef.current
+      .reset()
+      .setEffectiveTimeScale(1)
+      .setEffectiveWeight(1)
+      .fadeIn(duration)
+      .play()
+  }
 
   useFrame(() => {
     const player = scene.getPlayer()
@@ -26,19 +58,23 @@ export const HumanoidModel = ({
     if (player.speed) {
       if (currentAnimationRef.current !== "run") {
         currentAnimationRef.current = "run"
-        idleAnimation.stop()
-        walkAnimation.play()
+
+        fadeToAction("run", 0.2)
+
+        // idleAnimation.stop()
+        // walkAnimation.play()
       }
     } else {
       if (currentAnimationRef.current !== "idle") {
         currentAnimationRef.current = "idle"
-        walkAnimation.stop()
-        idleAnimation.play()
+
+        fadeToAction("idle", 0.2)
+
+        // walkAnimation.stop()
+        // idleAnimation.play()
       }
     }
   })
-
-  const { actions } = useAnimations(gltf.animations, group)
 
   useEffect(() => {
     gltf.scene.traverse(function (child) {
