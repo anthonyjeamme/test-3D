@@ -5,6 +5,7 @@ import { useAnimations } from "@react-three/drei"
 import { useFrame, useLoader } from "@react-three/fiber"
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
 import { useScene } from "../../../../game/input/scene/useScene"
+import { useInput } from "../../../../game/input/useInput/useInput"
 
 export const HumanoidModel = ({
   url,
@@ -16,6 +17,43 @@ export const HumanoidModel = ({
   const currentAnimationRef = useRef("idle")
   const { actions } = useAnimations(gltf.animations, group)
   const currentActionRef = useRef(actions["idle"])
+
+  const scene = useScene()
+
+  const input = useInput()
+
+  useEffect(() => {
+    const handleSit = () => {
+      if (scene.getPlayer().jumping) return
+
+      if (scene.getPlayer().sitting) {
+        fadeToActionOnce("sit-to-stand", 0.2)
+          .getMixer()
+          .addEventListener("finished", () => {
+            scene.getPlayer().sitting = false
+
+            fadeToAction("idle", 0.1)
+          })
+      } else {
+        scene.getPlayer().sitting = true
+
+        fadeToActionOnce("stand-to-sit", 0.2)
+          .getMixer()
+          .addEventListener("finished", () => {
+            fadeToAction("sit-idle", 0.1)
+          })
+      }
+    }
+    const handleJump = () => {}
+
+    input.addActionListener("SIT", handleSit)
+    input.addActionListener("JUMP", handleJump)
+
+    return () => {
+      input.removeActionListener("SIT", handleSit)
+      input.removeActionListener("JUMP", handleJump)
+    }
+  }, [])
 
   useEffect(() => {
     const handleKeyDown = e => {
@@ -30,8 +68,6 @@ export const HumanoidModel = ({
       window.removeEventListener("keydown", handleKeyDown)
     }
   }, [])
-
-  const scene = useScene()
 
   function fadeToAction(name, duration) {
     const previousAction = currentActionRef.current
@@ -49,29 +85,41 @@ export const HumanoidModel = ({
       .play()
   }
 
+  function fadeToActionOnce(name, duration) {
+    const previousAction = currentActionRef.current
+    currentActionRef.current = actions[name]
+
+    if (previousAction !== currentActionRef.current) {
+      previousAction?.fadeOut(duration)
+    }
+
+    return currentActionRef.current
+      .reset()
+      .setEffectiveTimeScale(1)
+      .setEffectiveWeight(1)
+      .fadeIn(duration)
+      .setLoop(THREE.LoopOnce, 1)
+      .play()
+  }
+
   useFrame(() => {
     const player = scene.getPlayer()
 
-    const walkAnimation = actions["run"]
-    const idleAnimation = actions["idle"]
-
-    if (player.speed) {
+    if (player.speed === 1) {
+      if (currentAnimationRef.current !== "walk") {
+        currentAnimationRef.current = "walk"
+        fadeToAction("walk", 0.2)
+      }
+    } else if (player.speed === 3) {
       if (currentAnimationRef.current !== "run") {
         currentAnimationRef.current = "run"
-
         fadeToAction("run", 0.2)
-
-        // idleAnimation.stop()
-        // walkAnimation.play()
       }
     } else {
       if (currentAnimationRef.current !== "idle") {
         currentAnimationRef.current = "idle"
 
         fadeToAction("idle", 0.2)
-
-        // walkAnimation.stop()
-        // idleAnimation.play()
       }
     }
   })

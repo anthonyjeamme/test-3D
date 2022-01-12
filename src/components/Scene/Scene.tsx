@@ -136,19 +136,21 @@ const Player = () => {
     let dx = 0,
       dz = 0
 
-    if (actionIsActive("GO_LEFT")) dx -= 1
-    if (actionIsActive("GO_RIGHT")) dx += 1
-    if (actionIsActive("GO_UP")) dz -= 1
-    if (actionIsActive("GO_DOWN")) dz += 1
-
     const player = scene.getPlayer()
+
+    const canMove = !player.sitting && !player.jumping
+
+    if (canMove && actionIsActive("GO_LEFT")) dx -= 1
+    if (canMove && actionIsActive("GO_RIGHT")) dx += 1
+    if (canMove && actionIsActive("GO_UP")) dz -= 1
+    if (canMove && actionIsActive("GO_DOWN")) dz += 1
 
     const { position } = player
 
     player.speed = Math.sqrt(dx * dx + dz * dz) ? 1 : 0
 
-    if (actionIsActive("RUN") || true) {
-      player.speed *= 2
+    if (actionIsActive("RUN")) {
+      player.speed *= 3
     }
 
     if (player.speed) {
@@ -168,15 +170,13 @@ const Player = () => {
 
         const abs = Math.abs(delta_rad)
 
-        console.log({ sign, abs })
-
         const add = Math.min(delta * 10 * (abs > Math.PI / 2 ? 2 : 1), abs)
 
         player.rotation += add * sign
       }
 
-      position.x += Math.sin(ang) * delta * speed * player.speed
-      position.z += Math.cos(ang) * delta * speed * player.speed
+      position.x += Math.sin(ang) * delta * speed * player.speed * 0.7
+      position.z += Math.cos(ang) * delta * speed * player.speed * 0.7
     }
 
     groupRef.current.rotation.y = player.rotation
@@ -201,7 +201,7 @@ const Player = () => {
   return (
     <group ref={groupRef} scale={0.9}>
       <mesh>
-        <HumanoidModel url="/models/cool.gltf" castShadow />
+        <HumanoidModel url="/models/bot/ybot.gltf" castShadow />
       </mesh>
     </group>
   )

@@ -1,8 +1,10 @@
 import React from "react"
 
-const sceneContext = React.createContext({})
+const sceneContext = React.createContext<TSceneContext>({
+  getPlayer: () => null,
+})
 
-export const useScene = () => React.useContext(sceneContext)
+export const useScene = () => React.useContext<TSceneContext>(sceneContext)
 
 export const SceneContext = ({ children }) => {
   const playerRef = React.useRef({
@@ -13,6 +15,8 @@ export const SceneContext = ({ children }) => {
     },
     rotation: 0,
     speed: 0,
+    jumping: false,
+    sitting: false,
   })
 
   return (
@@ -24,4 +28,8 @@ export const SceneContext = ({ children }) => {
       {children}
     </sceneContext.Provider>
   )
+}
+
+type TSceneContext = {
+  getPlayer: () => any
 }
