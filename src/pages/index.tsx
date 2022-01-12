@@ -14,7 +14,9 @@ import { TextureLoader } from "three/src/loaders/TextureLoader"
 import { useLoader } from "@react-three/fiber"
 import Scene from "../components/Scene/Scene"
 
-import "./style.css"
+import "./style.scss"
+import { InputContext } from "../game/input/useInput/useInput"
+import { SceneContext } from "../game/input/scene/useScene"
 
 const keyMap = {
   UP: false,
@@ -307,20 +309,31 @@ function Player(props) {
 
 const IndexPageContainer = () =>
   isBrowser() ? (
-    <Suspense fallback={null}>
-      <Canvas
-        concurrent
-        colorManagement
-        shadows
-        style={{
-          height: "100vh",
-        }}
-      >
-        <Scene />
-      </Canvas>
-    </Suspense>
+    <div>
+      <UI />
+      <Suspense fallback={null}>
+        <Canvas
+          concurrent
+          colorManagement
+          shadows
+          style={{
+            height: "100vh",
+          }}
+        >
+          <InputContext>
+            <SceneContext>
+              <Scene />
+            </SceneContext>
+          </InputContext>
+        </Canvas>
+      </Suspense>
+    </div>
   ) : null
 
 export default IndexPageContainer
 
 const isBrowser = () => ![typeof window, typeof document].includes("undefined")
+
+const UI = () => {
+  return <div className="UI">SUPER UI</div>
+}

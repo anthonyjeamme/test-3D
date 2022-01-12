@@ -1,12 +1,16 @@
 import React, { useEffect, useRef } from "react"
+import { Physics, usePlane, useBox, useSpring } from "@react-three/cannon"
 
 import { Lights } from "./Scene.lights"
-import { Model, AnimatedModel, TranspText } from "./Scene.model"
+import { Model, AnimatedModel, TranspText, SVGTexture } from "./Scene.model"
 import { useFrame, useLoader, useThree } from "@react-three/fiber"
 import { TextureLoader } from "three"
+import { HumanoidModel } from "../Renderers/WorldRenderer/Models/HumanoidModel"
+import { useInput } from "../../game/input/useInput/useInput"
+import { useScene } from "../../game/input/scene/useScene"
 
 const Scene = () => {
-  const reducedWallHeight = 1.2
+  const reducedWallHeight = 2.5
 
   return (
     <>
@@ -18,142 +22,34 @@ const Scene = () => {
         <group scale={0.25}>
           <Model url="/models/ground.gltf" receiveShadow />
         </group>
-      </group> */}
+      </group>  */}
 
       <Ground />
-
+      {/* 
       <group
-        scale={[0.1, 0.1, 0.15]}
-        position={[4.2, 0, 0.35]}
+        scale={[0.07, 0.1, 0.1]}
+        position={[4.3, 0, 0.6]}
         rotation={[0, Math.PI, 0]}
       >
         <Model url="/models/sofa.gltf" receiveShadow />
+      </group> */}
+
+      <group scale={0.2} position={[0, 0, 0]}>
+        <Model url="/models/table.gltf" castShadow />
       </group>
+
+      <group scale={0.2} position={[0, 0.8, 1.5]}>
+        <Model url="/models/pot-fleurs.gltf" castShadow />
+      </group>
+
+      {/* 
+      <group scale={0.2} position={[0, 0, 1.4]}>
+        <Model url="/models/table.gltf" castShadow />
+      </group> */}
 
       {/* <TranspText /> */}
 
       <Player />
-
-      <Wall direction="h" length={9.7} y={-4.5} x={0.3} />
-      <Wall
-        direction="h"
-        length={4.8}
-        y={4.5}
-        height={reducedWallHeight}
-        x={-2.2}
-      />
-
-      <Wall
-        direction="h"
-        length={4}
-        y={4.5}
-        height={reducedWallHeight}
-        x={3.2}
-      />
-
-      <Wall
-        direction="h"
-        length={4.2}
-        y={4.5 - 2.9}
-        x={-2.3}
-        height={reducedWallHeight}
-        width={0.1}
-      />
-
-      <Wall
-        direction="h"
-        length={4.2}
-        y={4.5 - 2.9 - 2.8}
-        x={-2.3}
-        height={reducedWallHeight}
-        width={0.1}
-      />
-
-      <Wall
-        direction="h"
-        length={0.3}
-        y={4.5 - 2.9 - 2.8 - 1.1}
-        x={-0.5}
-        height={reducedWallHeight}
-        width={0.1}
-      />
-
-      <Wall
-        direction="h"
-        length={1}
-        y={4.5 - 2.9 - 2.8 - 1.1}
-        x={1.4}
-        height={reducedWallHeight}
-        width={0.1}
-      />
-
-      <Wall
-        direction="v"
-        height={reducedWallHeight}
-        length={1.9}
-        x={-0.7}
-        y={-3.35}
-        width={0.1}
-      />
-
-      {/* Wall bed 1 */}
-      <Wall
-        direction="v"
-        height={reducedWallHeight}
-        length={2}
-        x={-0.2}
-        y={0.65}
-        width={0.1}
-      />
-
-      {/* Toilets */}
-
-      <Wall
-        direction="v"
-        height={reducedWallHeight}
-        length={0.8}
-        x={-0.2}
-        y={4.2}
-        width={0.1}
-      />
-      <Wall
-        direction="hs"
-        height={reducedWallHeight}
-        length={0.9}
-        x={-0.6}
-        y={3}
-        width={0.1}
-      />
-
-      <Wall
-        direction="v"
-        height={reducedWallHeight}
-        length={1.55}
-        x={-1}
-        y={3.8}
-        width={0.1}
-      />
-
-      <Wall
-        direction="v"
-        height={reducedWallHeight}
-        length={1.9}
-        x={-0.7 + 2.57}
-        y={-3.35}
-        width={0.1}
-      />
-
-      <Wall
-        direction="h"
-        length={4.4}
-        y={4.5 - 2.9 - 2.8}
-        x={3.2}
-        height={reducedWallHeight}
-        width={0.1}
-      />
-
-      <Wall direction="v" length={9} x={-4.5} />
-      <Wall direction="v" length={9} x={5.2} />
 
       {/* <Wall direction="v" length={9 * 2} x={9} /> */}
       {/* <Wall direction="h" length={9 * 2} y={-9} />
@@ -180,6 +76,32 @@ const Scene = () => {
 
 export default Scene
 
+const PCube = props => {
+  const [ref] = useBox(() => ({
+    mass: 1,
+    position: [0, 5, 0],
+    rotation: [0.4, 0.2, 0.5],
+    ...props,
+  }))
+  return (
+    <mesh receiveShadow castShadow ref={ref}>
+      <boxGeometry />
+      <meshLambertMaterial color="hotpink" />
+    </mesh>
+  )
+}
+
+const PPlane = props => {
+  const [ref] = usePlane(() => ({ rotation: [-Math.PI / 2, 0, 0], ...props }))
+  return (
+    <mesh ref={ref} receiveShadow>
+      <planeGeometry args={[1000, 1000]} />
+      <shadowMaterial color="#FF0000" transparent opacity={0.4} />
+      <meshLambertMaterial color="hotpink" />
+    </mesh>
+  )
+}
+
 const Cube = () => {
   return (
     <>
@@ -190,44 +112,51 @@ const Cube = () => {
     </>
   )
 }
+// const position = {
+//   x: 0.2,
+//   y: 0,
+//   z: 0,
+//   speed: 0,
+//   rotation: 0,
+// }
 
-const keyMap = {
-  UP: false,
-  DOWN: false,
-  LEFT: false,
-  RIGHT: false,
-}
-
-const position = {
-  x: 0.2,
-  y: 0,
-  z: 0,
-  rotation: 0,
+export const getPlayerData = () => {
+  return position
 }
 
 const Player = () => {
-  useKeyHandling()
+  const scene = useScene()
+  const { actionIsActive } = useInput()
 
   const groupRef = useRef()
 
-  const speed = 4
+  const speed = 2
 
   useFrame((_, delta) => {
-    if (keyMap.LEFT) position.rotation += delta * 3
-    if (keyMap.RIGHT) position.rotation -= delta * 3
+    let dx = 0,
+      dz = 0
 
-    if (keyMap.UP) {
-      position.z += Math.cos(position.rotation) * delta * speed
-      position.x += Math.sin(position.rotation) * delta * speed
+    if (actionIsActive("GO_LEFT")) dx -= 1
+    if (actionIsActive("GO_RIGHT")) dx += 1
+    if (actionIsActive("GO_UP")) dz -= 1
+    if (actionIsActive("GO_DOWN")) dz += 1
+
+    const player = scene.getPlayer()
+
+    const { position } = player
+
+    player.speed = Math.sqrt(dx * dx + dz * dz) ? 1 : 0
+
+    if (actionIsActive("RUN") || true) {
+      player.speed *= 2
     }
 
-    if (keyMap.DOWN) {
-      position.z -= Math.cos(position.rotation) * delta * speed
-      position.x -= Math.sin(position.rotation) * delta * speed
+    if (player.speed) {
+      position.rotation = Math.atan2(dx, dz)
+      position.x += Math.sin(position.rotation) * delta * speed * player.speed
+      position.z += Math.cos(position.rotation) * delta * speed * player.speed
     }
-  })
 
-  useFrame((state, delta) => {
     groupRef.current.rotation.y = position.rotation
     groupRef.current.position.x = position.x
     groupRef.current.position.z = position.z
@@ -237,80 +166,20 @@ const Player = () => {
 
   useEffect(() => {
     camera.position.y = 2
-    camera.rotation.x = -Math.PI / 3.5
+    camera.rotation.x = -Math.PI / 3
   }, [])
 
   useFrame(() => {
+    const { position } = scene.getPlayer()
     camera.position.x = position.x
-    camera.position.z = position.z + 4
-    camera.position.y = position.y + 6
+    camera.position.z = position.z + 2.5
+    camera.position.y = position.y + 4.5
   })
 
   return (
-    <group ref={groupRef}>
-      <AnimatedModel url="/models/cool.gltf" castShadow />
-    </group>
-  )
-}
-
-const useKeyHandling = () => {
-  useEffect(() => {
-    const handleKeyDown = e => {
-      if (e.key === "z") {
-        keyMap.UP = true
-      }
-      if (e.key === "s") {
-        keyMap.DOWN = true
-      }
-      if (e.key === "q") {
-        keyMap.LEFT = true
-      }
-      if (e.key === "d") {
-        keyMap.RIGHT = true
-      }
-    }
-    const handleKeyUp = e => {
-      if (e.key === "z") {
-        keyMap.UP = false
-      }
-      if (e.key === "s") {
-        keyMap.DOWN = false
-      }
-      if (e.key === "q") {
-        keyMap.LEFT = false
-      }
-      if (e.key === "d") {
-        keyMap.RIGHT = false
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown)
-    window.addEventListener("keyup", handleKeyUp)
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown)
-      window.removeEventListener("keyup", handleKeyUp)
-    }
-  }, [])
-}
-
-const Wall = ({
-  height = 2.5,
-  direction = "h",
-  length,
-  x = 0,
-  y = 0,
-  width = 0.2,
-}) => {
-  return (
-    <group
-      position={[0 + x, height / 2, y]}
-      rotation={[0, direction === "v" ? Math.PI / 2 : 0, 0]}
-    >
+    <group ref={groupRef} scale={0.9}>
       <mesh>
-        <boxGeometry args={[length, height, width]} />
-
-        <meshStandardMaterial color={"#e9d7ce"} />
+        <HumanoidModel url="/models/cool.gltf" castShadow />
       </mesh>
     </group>
   )

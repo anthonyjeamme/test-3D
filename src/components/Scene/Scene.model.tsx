@@ -7,9 +7,12 @@ import { useLoader } from "@react-three/fiber"
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
 import { useAnimations } from "@react-three/drei"
 import { TextureLoader } from "three"
+import { getPlayerData } from "./Scene"
 
 export const Model = ({ url, castShadow = false, receiveShadow = false }) => {
   const gltf = useLoader(GLTFLoader, url)
+
+  const instanceRef = useRef(null)
 
   useEffect(() => {
     gltf.scene.traverse(function (child) {
@@ -20,7 +23,14 @@ export const Model = ({ url, castShadow = false, receiveShadow = false }) => {
     })
   }, [gltf])
 
-  return <primitive object={gltf.scene} dispose={null} />
+  return (
+    <primitive
+      object={gltf.scene.clone()}
+      dispose={null}
+      castShadow={castShadow}
+      receiveShadow={receiveShadow}
+    />
+  )
 }
 
 export const AnimatedModel = ({
@@ -43,6 +53,7 @@ export const AnimatedModel = ({
     })
 
     const handleKeyUp = e => {
+      console.log("KEY UP")
       const walkAnimation = actions["run"]
       const idleAnimation = actions["idle"]
 
@@ -79,7 +90,7 @@ export const AnimatedModel = ({
       window.removeEventListener("keyup", handleKeyUp)
       window.removeEventListener("keydown", handleKeyDown)
     }
-  }, [gltf])
+  }, [])
 
   useEffect(() => {
     const idleAnimation = actions["idle"]
@@ -89,7 +100,7 @@ export const AnimatedModel = ({
 
   return (
     <group ref={group} scale={(1.115 * 1.75) / 2}>
-      <primitive object={gltf.scene} dispose={null} />
+      <primitive object={gltf} dispose={null} />
     </group>
   )
 }
@@ -104,7 +115,7 @@ export const TranspText = () => {
       {Array.from(new Array(200)).map((_, i) => (
         <mesh
           scale={0.2}
-          position={[Math.random() - 5, 0.75, 0.1 * i - 4]}
+          position={[Math.random() * 5 - 5, 0.75, 0.1 * i - 4]}
           rotation={[-0.2, 0, 0]}
         >
           {/* Width and height segments for displacementMap */}
@@ -119,6 +130,22 @@ export const TranspText = () => {
           />
         </mesh>
       ))}
+    </group>
+  )
+}
+
+export const SVGTexture = () => {
+  const colorMap = useLoader(TextureLoader, "/test.svg")
+
+  const factor = 50
+
+  return (
+    <group>
+      <mesh position={[0, 1, 0]} scale={1} rotation={[-Math.PI / 2, 0, 0]}>
+        {/* Width and height segments for displacementMap */}
+        <planeBufferGeometry attach="geometry" args={[2, 2]} />
+        <meshStandardMaterial map={colorMap} />
+      </mesh>
     </group>
   )
 }
