@@ -9,9 +9,9 @@ export const useScene = () => React.useContext<TSceneContext>(sceneContext)
 export const SceneContext = ({ children }) => {
   const playerRef = React.useRef({
     position: {
-      x: 0,
+      x: 10,
       y: 0,
-      z: 0,
+      z: 10,
     },
     rotation: 0,
     speed: 0,

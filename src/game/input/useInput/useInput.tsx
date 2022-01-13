@@ -13,12 +13,12 @@ const inputContext = React.createContext<TInputContext>({
 })
 
 const defaultKeyBinding: TKeyBinding = {
-  GO_UP: ["z", "Z"],
-  GO_DOWN: ["s", "S"],
-  GO_LEFT: ["q", "Q"],
-  GO_RIGHT: ["d", "D"],
-  INTERACT: ["e", "E"],
-  SIT: ["f", "F"],
+  GO_UP: ["z"],
+  GO_DOWN: ["s"],
+  GO_LEFT: ["q"],
+  GO_RIGHT: ["d"],
+  INTERACT: ["e"],
+  SIT: ["f"],
   RUN: ["Shift"],
   JUMP: [" "],
 }
@@ -43,9 +43,11 @@ export const InputContext = ({ children }) => {
   const handleKeyDown = (e: KeyboardEvent) => {
     e.preventDefault()
 
-    keyStatesRef.current[e.key] = true
+    const key = e.key.match(/^[a-zA-Z]$/) ? e.key.toLowerCase() : e.key
 
-    const keyAction = getKeyAction(e.key)
+    keyStatesRef.current[key] = true
+
+    const keyAction = getKeyAction(key)
 
     if (keyAction) {
       callActionCallbacks(keyAction)
@@ -60,7 +62,10 @@ export const InputContext = ({ children }) => {
 
   const handleKeyUp = (e: KeyboardEvent) => {
     e.preventDefault()
-    delete keyStatesRef.current[e.key]
+
+    const key = e.key.match(/^[a-zA-Z]$/) ? e.key.toLowerCase() : e.key
+
+    delete keyStatesRef.current[key]
   }
 
   const handleBlur = () => {

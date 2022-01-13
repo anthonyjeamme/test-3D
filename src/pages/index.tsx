@@ -307,10 +307,21 @@ function Player(props) {
   )
 }
 
-const IndexPageContainer = () =>
-  isBrowser() ? (
-    <div>
-      <UI />
+const IndexPageContainer = () => {
+  const [constructionMode, setConstructionMode] = useState(false)
+
+  return isBrowser() ? (
+    <div
+      onContextMenu={e => {
+        e.preventDefault()
+      }}
+    >
+      <UI
+        constructionMode={constructionMode}
+        handleToggleConstructionMode={mode => {
+          setConstructionMode(mode === constructionMode ? null : mode)
+        }}
+      />
       <Suspense fallback={null}>
         <Canvas
           concurrent
@@ -322,18 +333,62 @@ const IndexPageContainer = () =>
         >
           <InputContext>
             <SceneContext>
-              <Scene />
+              <Scene constructionMode={constructionMode} />
             </SceneContext>
           </InputContext>
         </Canvas>
       </Suspense>
     </div>
   ) : null
+}
 
 export default IndexPageContainer
 
 const isBrowser = () => ![typeof window, typeof document].includes("undefined")
 
-const UI = () => {
-  return <div className="UI">SUPER UI</div>
+const UI = ({ handleToggleConstructionMode, constructionMode }) => {
+  return (
+    <div className="UI">
+      <div className="bottom-right">
+        <button
+          style={{ opacity: constructionMode === "wall" ? 1 : 0.7 }}
+          className="green-button"
+          onClick={() => {
+            handleToggleConstructionMode("wall")
+          }}
+        >
+          Murs
+        </button>
+
+        <button
+          style={{ opacity: constructionMode === "box" ? 1 : 0.7 }}
+          className="green-button"
+          onClick={() => {
+            handleToggleConstructionMode("box")
+          }}
+        >
+          Boites
+        </button>
+      </div>
+    </div>
+  )
 }
+
+const GreenBG = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 374.97 151.46"
+    style={{
+      height: 60,
+    }}
+  >
+    <polygon
+      points="374.97 36.4 369.11 39.74 372.88 41.63 367.44 80.17 365.97 90.58 367.44 105.01 369.53 125.52 373.3 134.31 368.69 149.16 363.88 151.46 346.52 147.9 297.35 145.18 266.18 149.16 237.34 142.97 163.91 142.97 115.14 146.86 87.52 144.97 70.99 148.74 30.41 144.56 11.79 150.41 3 145.6 6.35 133.89 5.1 126.77 11.79 115.65 11.79 54.46 7.81 30.33 10.95 28.66 7.81 20.71 6.77 11.59 14.09 4.39 36.89 9.2 49.24 6.27 117.44 9.62 133.21 11.59 231.22 11.59 250.7 9.83 267.19 11.59 292.51 11.59 316.39 7.95 357.4 9.83 365.56 5.64 374.97 9.62 369.95 22.17 374.97 36.4"
+      fill="#183a1f"
+    />
+    <polygon
+      fill="#40a058"
+      points="371.97 32.01 366.11 35.35 369.88 37.24 364.44 75.78 362.97 86.19 364.44 100.62 366.53 121.13 370.3 129.92 365.69 144.77 360.88 147.07 343.52 143.51 294.35 140.79 263.18 144.77 234.34 138.58 160.91 138.58 112.14 142.47 84.52 140.58 67.99 144.35 27.41 140.17 8.79 146.02 0 141.21 3.35 129.5 2.1 122.38 8.79 111.26 8.79 50.07 4.81 25.94 7.95 24.27 4.81 16.32 3.77 7.2 11.09 0 33.89 4.81 46.24 1.88 114.44 5.23 130.21 7.2 228.22 7.2 247.7 5.44 264.19 7.2 289.51 7.2 313.39 3.56 354.4 5.44 362.56 1.25 371.97 5.23 366.95 17.78 371.97 32.01"
+    />
+  </svg>
+)

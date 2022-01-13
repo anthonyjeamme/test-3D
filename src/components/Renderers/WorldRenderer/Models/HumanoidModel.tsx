@@ -27,13 +27,22 @@ export const HumanoidModel = ({
       if (scene.getPlayer().jumping) return
 
       if (scene.getPlayer().sitting) {
-        changeToAction("idle")
         fadeToActionOnce("sit-to-stand", 0.2)
+
+        setTimeout(() => {
+          group.current.position.z = 0
+          scene.getPlayer().sitting = false
+          changeToAction("idle")
+        }, actions["sit-to-stand"]._clip.duration * 1000)
       } else {
         scene.getPlayer().sitting = true
 
-        changeToAction("sit-idle")
         fadeToActionOnce("stand-to-sit", 0.2)
+
+        setTimeout(() => {
+          group.current.position.z = -0.47
+          changeToAction("sit-idle")
+        }, actions["stand-to-sit"]._clip.duration * 1000)
       }
     }
 
@@ -42,17 +51,13 @@ export const HumanoidModel = ({
     input.addActionListener("SIT", handleSit)
     input.addActionListener("JUMP", handleJump)
     mixer.addEventListener("finished", event => {
-      console.log(event.action._clip.name)
-
       const action = event.action._clip.name
 
       if (action === "stand-to-sit") {
-        group.current.position.z = -0.5
-        changeToAction("sit-idle")
+        // changeToAction("sit-idle")
       } else if (action === "sit-to-stand") {
         scene.getPlayer().sitting = false
-        group.current.position.z = 0
-        changeToAction("idle")
+        // changeToAction("idle")
       }
     })
 
@@ -112,6 +117,8 @@ export const HumanoidModel = ({
     if (previousAction !== currentActionRef.current) {
       previousAction?.fadeOut(duration)
     }
+
+    currentActionRef.current.clampWhenFinished = true
 
     return currentActionRef.current
       .reset()

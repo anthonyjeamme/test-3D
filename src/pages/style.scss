@@ -10,22 +10,35 @@ body {
 }
 
 .UI {
-  position: fixed;
-  top: 30px;
-  left: 30px;
-  z-index: 100;
-  font-size: 40px;
-  line-height: 30px;
-  padding: 20px;
-  font-weight: 700;
-  box-sizing: border-box;
-  width: 500px;
-  height: 100px;
-  background-image: url(/ui/cc.svg);
-  background-size: 500px 100px;
-  color: white;
-  display: flex;
-  align-items: center;
-  text-shadow: 2px 4px 0 #111111;
-  user-select: none;
+  & > .bottom-right {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 100;
+    font-size: 40px;
+    line-height: 30px;
+    padding: 20px;
+    font-weight: 700;
+    box-sizing: border-box;
+    color: white;
+    display: flex;
+    align-items: center;
+    text-shadow: 2px 4px 0 #111111;
+    user-select: none;
+  }
+
+  .green-button {
+    background-image: url(/ui/button.svg);
+    background-size: calc(374px / 2) calc(151px / 2);
+    height: calc(151px / 2);
+    width: calc(374px / 2);
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+    font-size: 30px;
+    color: white;
+    cursor: pointer;
+    transition: opacity 250ms;
+    outline: none;
+  }
 }
